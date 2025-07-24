@@ -16,7 +16,7 @@ public class dataProvider {
         Object[][] loginData = {
                 {"Admin", "12345", "Invalid credentials"},
                 {"ABCD", "Hum@nhrm123", "Invalid credentials"},
-                {"Admin", " ", "Password cannot be empty"},
+                {"Admin", "", "Password is Empty"},
                 {"", "Hum@nhrm123", "Username cannot be empty"}
         };
         return loginData;
