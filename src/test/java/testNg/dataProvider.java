@@ -5,18 +5,22 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 
 import java.time.Duration;
 
-public class hardAssertions {
-    /*
-    verify that the login button is enabled
-    verify that you are able to login into HRMS website
-     */
+public class dataProvider {
 
+    @DataProvider(name = "credentials")
+    public Object[][] data (){
+        Object[][] loginData = {
+                {"Admin", "12345", "Invalid credentials"},
+                {"ABCD", "Hum@nhrm123", "Invalid credentials"},
+                {"Admin", " ", "Password cannot be empty"},
+                {"", "Hum@nhrm123", "Username cannot be empty"}
+        };
+        return loginData;
+    }
     public static WebDriver driver;
 
     @BeforeMethod
@@ -27,30 +31,25 @@ public class hardAssertions {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
     }
 
-    @Test
-    public void logintestCase(){
+    @Test(dataProvider = "credentials")
+    public void loginTest(String usrname, String pass, String ErrorMsg){
         //locating the username
         WebElement username = driver.findElement(By.xpath("//input[@name = 'txtUsername']"));
-        username.sendKeys("Admin");
+        username.sendKeys(usrname);
         //locating the password field
         WebElement password = driver.findElement(By.xpath("//input[@id = 'txtPassword']"));
-        password.sendKeys("Hum@nhrm123");
+        password.sendKeys(pass);
         //locating the loginButton
         WebElement loginBtn = driver.findElement(By.xpath("//input[@name = 'Submit']"));
-        //verify that login button is enabled
-
-        boolean statusOfLoginBtn = loginBtn.isEnabled();
-        //statusOfLoginBtn =false
-        //assertions
-        Assert.assertTrue(statusOfLoginBtn);
-        //login in
         loginBtn.click();
-        //locate the welcome admin text
-        WebElement actualMsg = driver.findElement(By.xpath("//a[@id='welcome']"));
-        String actualMessage = actualMsg.getText();
+        // get the error message
+        WebElement error = driver.findElement(By.xpath("//span[@id='spanMessage']"));
+        String actualErrorMessage = error.getText();
+        //assertion to verify
+        Assert.assertEquals(actualErrorMessage,ErrorMsg);
 
-        Assert.assertEquals(actualMessage, "Welcome Admin");
     }
+
     @AfterMethod
     public void tearDown(){
         driver.quit();

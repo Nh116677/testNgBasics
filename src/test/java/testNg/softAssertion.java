@@ -8,10 +8,11 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
 import java.time.Duration;
 
-public class hardAssertions {
+public class softAssertion {
     /*
     verify that the login button is enabled
     verify that you are able to login into HRMS website
@@ -40,19 +41,22 @@ public class hardAssertions {
         //verify that login button is enabled
 
         boolean statusOfLoginBtn = loginBtn.isEnabled();
-        //statusOfLoginBtn =false
-        //assertions
-        Assert.assertTrue(statusOfLoginBtn);
-        //login in
+        SoftAssert soft = new SoftAssert();
+        soft.assertTrue(statusOfLoginBtn);
+
         loginBtn.click();
+
         //locate the welcome admin text
         WebElement actualMsg = driver.findElement(By.xpath("//a[@id='welcome']"));
         String actualMessage = actualMsg.getText();
-
-        Assert.assertEquals(actualMessage, "Welcome Admin");
+        //verify that the text is Welcome Admin
+        soft.assertEquals(actualMessage, "Welcome Admin");
+        soft.assertAll();
+        //Assert.assertEquals(actualMessage, "Welcome Admin");
     }
     @AfterMethod
     public void tearDown(){
         driver.quit();
     }
+
 }
